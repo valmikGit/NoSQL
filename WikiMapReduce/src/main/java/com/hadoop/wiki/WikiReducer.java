@@ -1,2 +1,4 @@
-package com.hadoop.wiki;public class WikiReducer {
+package com.hadoop.wiki;
+
+public class WikiReducer {
 }
