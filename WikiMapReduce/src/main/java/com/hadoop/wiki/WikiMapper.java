@@ -1,31 +1,27 @@
 package com.hadoop.wiki;
 
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Mapper;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
-import java.io.IOException; /**
- * Hello world!
- *
- */
-
 public class WikiMapper extends Mapper<LongWritable, Text, Text, Text> {
-        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-            String line = value.toString();
-            String[] parts = line.split("\t", 2); // Assuming tab-separated DocID and content
-            if (parts.length < 2) return;
 
-            String docID = parts[0];
-            String content = parts[1];
+    @Override
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        // Assuming each document is one input file with ID as the filename
+        String docID = context.getConfiguration().get("map.input.file");
 
-            StringTokenizer tokenizer = new StringTokenizer(content);
-            int index = 0;
+        // Tokenize words while tracking index positions
+        StringTokenizer tokenizer = new StringTokenizer(value.toString());
+        int index = 0;
 
-            while (tokenizer.hasMoreTokens()) {
-                String word = tokenizer.nextToken();
+        while (tokenizer.hasMoreTokens()) {
+            String word = tokenizer.nextToken().replaceAll("[^a-zA-Z]", "").toLowerCase(); // Normalize words
+            if (!word.isEmpty()) {
                 context.write(new Text(docID), new Text(index + "," + word));
                 index++;
             }
         }
+    }
 }
