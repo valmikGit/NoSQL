@@ -9,3 +9,5 @@
 *.xml
 *.bin
 *.MF
+WikiMapReduce/target/*
+WikiMapReduce/dependency-reduced-pom.xml
