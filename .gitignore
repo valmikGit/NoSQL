@@ -2,3 +2,10 @@
 *.TSV
 *.jpg
 *.txt
+*.class
+*.jar
+*.properties
+*.lst
+*.xml
+*.bin
+*.MF
