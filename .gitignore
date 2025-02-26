@@ -2,9 +2,12 @@
 *.TSV
 *.jpg
 *.txt
+*.class
+*.jar
+*.properties
+*.lst
+*.xml
+*.bin
+*.MF
 WikiMapReduce/target/*
 WikiMapReduce/dependency-reduced-pom.xml
-*.jar
-*.lst
-*.class
-
