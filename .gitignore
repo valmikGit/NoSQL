@@ -2,3 +2,5 @@
 *.TSV
 *.jpg
 *.txt
+WikiMapReduce/target/*
+WikiMapReduce/dependency-reduced-pom.xml
