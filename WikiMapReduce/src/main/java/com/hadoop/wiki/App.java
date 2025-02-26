@@ -16,9 +16,12 @@ public class App {
         }
 
         Configuration conf = new Configuration();
+        // Explicitly set the HDFS implementation if needed
+        conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
+
         Job job = Job.getInstance(conf, "Wiki Indexer");
 
-        // Print out configuration values for debugging
+        // Debug prints for configuration values
         System.out.println("fs.defaultFS = " + conf.get("fs.defaultFS"));
         System.out.println("mapreduce.framework.name = " + conf.get("mapreduce.framework.name"));
         System.out.println("yarn.resourcemanager.address = " + conf.get("yarn.resourcemanager.address"));
