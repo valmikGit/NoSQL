@@ -3,14 +3,11 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class WikiTimestampMapper extends Mapper<Object, Text, IntWritable, Text> {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     @Override
     protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
         String line = value.toString().trim();
@@ -35,22 +32,17 @@ public class WikiTimestampMapper extends Mapper<Object, Text, IntWritable, Text>
         if (dotIndex != -1) {
             docID = docID.substring(0, dotIndex);
         }
-
-        // Convert timestamp to long
-        long timestamp;
-        try {
-            timestamp = Long.parseLong(docID);
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid timestamp: " + docID);
-            return;
-        }
-
         // Convert timestamp to formatted UTC date
-        ZonedDateTime utcDateTime = Instant.ofEpochSecond(timestamp).atZone(ZoneOffset.UTC);
-        String formattedDate = utcDateTime.format(formatter);
+//        ZonedDateTime utcDateTime = Instant.ofEpochSecond(timestamp).atZone(ZoneOffset.UTC);
+//        String formattedDate = utcDateTime.format(formatter);
+        long timestamp = Long.parseLong(docID)*10;
+        // If you did not want to convert it into timestamp then comment down below 3 lines
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String formattedTime = sdf.format(new Date(timestamp));
 
         // Emit (index, "formattedDate,word")
-        System.out.println("Mapper Output: " + index + " " + formattedDate + " " + word);
-        context.write(new IntWritable(index), new Text(formattedDate + "," + word));
+        System.out.println("Mapper Output: " + index + " " + formattedTime + " " + word);
+        context.write(new IntWritable(index), new Text(formattedTime + "," + word));
     }
 }
