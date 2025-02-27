@@ -1,43 +1,36 @@
 package org.example;
 
-
-
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
-public class Wikireducer extends Reducer<IntWritable, Text, IntWritable, Text> {
-
+public class Wikireducer extends Reducer<Text, Text, Text, Text> {
     @Override
-    protected void reduce(IntWritable index, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+    protected void reduce(Text index, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         String latestWord = "";
-        int maxTimestamp = Integer.MIN_VALUE;
+        LocalDate maxDate = LocalDate.MIN; // Start with the smallest possible date
 
         for (Text val : values) {
             String[] parts = val.toString().split(",");
+
+            // Ensure valid input format (date, word)
             if (parts.length < 2) continue;
 
-            // Extract only the numeric part of the document ID
-            String numericPart = parts[0].replaceAll("[^0-9]", ""); // Remove non-numeric characters
-
-            // Ensure numericPart is not empty before parsing
-            if (numericPart.isEmpty()) {
-                continue; // Skip this entry if it has no valid timestamp
-            }
+            String dateStr = parts[0].trim(); // Extract date part
+            String word = parts[1].trim(); // Extract word part
 
             try {
-                int timestamp = Integer.parseInt(numericPart); // Convert to integer
-                String word = parts[1];
+                LocalDate date = LocalDate.parse(dateStr); // Convert string to LocalDate
 
-                // Select the word with the highest timestamp
-                if (timestamp > maxTimestamp) {
-                    maxTimestamp = timestamp;
+                // Update latest word if a newer date is found
+                if (date.isAfter(maxDate)) {
+                    maxDate = date;
                     latestWord = word;
                 }
-            } catch (NumberFormatException e) {
-                System.err.println("Skipping invalid timestamp: " + parts[0]); // Log invalid values
+            } catch (DateTimeParseException e) {
+                System.err.println("Skipping invalid date: " + dateStr);
             }
         }
 
@@ -46,5 +39,4 @@ public class Wikireducer extends Reducer<IntWritable, Text, IntWritable, Text> {
             context.write(index, new Text(latestWord));
         }
     }
-
 }
