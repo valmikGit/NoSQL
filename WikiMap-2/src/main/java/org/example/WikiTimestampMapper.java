@@ -27,6 +27,17 @@ public class WikiTimestampMapper extends Mapper<Object, Text, IntWritable, Text>
         if (docWord.length < 2) return;
 
         String docID = docWord[0];
+        docID = docID.substring(0, filename.lastIndexOf('.'));
+
+        long timestamp = Long.parseLong(docID);  // Convert to long
+
+        // Convert to Instant and then to UTC time
+        ZonedDateTime utcDateTime = Instant.ofEpochSecond(timestamp).atZone(ZoneOffset.UTC);
+
+        // Format the output
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        docID = utcDateTime.format(formatter);
+
         String word = docWord[1];
 
         // Emit (index, (timestamp, word))
