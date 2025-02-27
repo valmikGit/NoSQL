@@ -27,7 +27,7 @@ public class WikiTimestampMapper extends Mapper<Object, Text, IntWritable, Text>
         if (docWord.length < 2) return;
 
         String docID = docWord[0];
-        docID = docID.substring(0, filename.lastIndexOf('.'));
+        docID = docID.substring(0, docID.lastIndexOf('.'));
 
         long timestamp = Long.parseLong(docID);  // Convert to long
 
