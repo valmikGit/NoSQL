@@ -36,7 +36,7 @@ def load_mapreduce_output(filename):
                 if len(word_timestamp) < 2:
                     continue
 
-                word = word_timestamp[0].strip()
+                word = word_timestamp[0].strip().replace(",", "")  # Remove commas from predicted word
                 reducer_data[index] = word
     except Exception as e:
         print(f"Error reading file {filename}: {e}")
