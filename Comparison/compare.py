@@ -44,13 +44,13 @@ def load_mapreduce_output(filename):
 
     return reducer_data
 
-# Load original data
+# Load original data and remove commas
 def load_original_data(filename):
     data = {}
     encoding = detect_encoding(filename)  # Detect encoding dynamically
     try:
         with open(filename, "r", encoding=encoding, errors="ignore") as file:
-            for index, word in enumerate(file.read().split(), start=1):
+            for index, word in enumerate(file.read().replace(",", "").split(), start=1):
                 data[index] = word
     except Exception as e:
         print(f"Error reading file {filename}: {e}")
