@@ -11,38 +11,34 @@ public class WikiTimestampMapper extends Mapper<Object, Text, IntWritable, Text>
     @Override
     protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
         String line = value.toString().trim();
-        if (line.isEmpty()) return; // Skip empty lines
 
-        // Split line into index and (doc-ID, word)
         String[] parts = line.split("\\s+", 2);
+
         if (parts.length < 2) return;
 
-        int index = Integer.parseInt(parts[0]);
-        String docWordPair = parts[1].replaceAll("[()]", ""); // Remove parentheses
+        try {
 
-        // Extract doc-ID and word
-        String[] docWord = docWordPair.split(",");
-        if (docWord.length < 2) return;
+            int index = Integer.parseInt(parts[0]);
 
-        String docID = docWord[0].trim();
-        String word = docWord[1].trim();
+            String content = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')'));
 
-        // Extract timestamp from docID (before any dot if present)
-        int dotIndex = docID.lastIndexOf('.');
-        if (dotIndex != -1) {
-            docID = docID.substring(0, dotIndex);
+            String[] splits = content.split("\\s+", 2);
+            if (splits.length < 2) return;
+
+            String docID = splits[0].split("\\.")[0];
+
+            long timestamp = Long.parseLong(docID)*100;
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String formattedTime = sdf.format(new Date(timestamp));
+
+            String word = splits[1];
+
+            context.write(new IntWritable(index), new Text(formattedTime + "," + word));
+
+        } catch (NumberFormatException e) {
+
         }
-        // Convert timestamp to formatted UTC date
-//        ZonedDateTime utcDateTime = Instant.ofEpochSecond(timestamp).atZone(ZoneOffset.UTC);
-//        String formattedDate = utcDateTime.format(formatter);
-        long timestamp = Long.parseLong(docID)*10;
-        // If you did not want to convert it into timestamp then comment down below 3 lines
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String formattedTime = sdf.format(new Date(timestamp));
 
-        // Emit (index, "formattedDate,word")
-        System.out.println("Mapper Output: " + index + " " + formattedTime + " " + word);
-        context.write(new IntWritable(index), new Text(formattedTime + "," + word));
     }
 }
