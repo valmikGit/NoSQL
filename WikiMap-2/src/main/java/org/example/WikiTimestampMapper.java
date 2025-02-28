@@ -1,22 +1,16 @@
 package org.example;
-
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class WikiTimestampMapper extends Mapper<Object, Text, IntWritable, Text> {
-
     @Override
     protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-        // Read a line from the output of Problem 2
         String line = value.toString().trim();
-
         if (line.isEmpty()) return; // Skip empty lines
 
         // Split line into index and (doc-ID, word)
@@ -27,24 +21,28 @@ public class WikiTimestampMapper extends Mapper<Object, Text, IntWritable, Text>
         String docWordPair = parts[1].replaceAll("[()]", ""); // Remove parentheses
 
         // Extract doc-ID and word
-        String[] docWord = docWordPair.split(", ");
+        String[] docWord = docWordPair.split(",");
         if (docWord.length < 2) return;
 
-        String docID = docWord[0];
-        docID = docID.substring(0, docID.lastIndexOf('.'));
+        String docID = docWord[0].trim();
+        String word = docWord[1].trim();
 
-        long timestamp = Long.parseLong(docID);  // Convert to long
+        // Extract timestamp from docID (before any dot if present)
+        int dotIndex = docID.lastIndexOf('.');
+        if (dotIndex != -1) {
+            docID = docID.substring(0, dotIndex);
+        }
+        // Convert timestamp to formatted UTC date
+//        ZonedDateTime utcDateTime = Instant.ofEpochSecond(timestamp).atZone(ZoneOffset.UTC);
+//        String formattedDate = utcDateTime.format(formatter);
+        long timestamp = Long.parseLong(docID)*10;
+        // If you did not want to convert it into timestamp then comment down below 3 lines
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String formattedTime = sdf.format(new Date(timestamp));
 
-        // Convert to Instant and then to UTC time
-        ZonedDateTime utcDateTime = Instant.ofEpochSecond(timestamp).atZone(ZoneOffset.UTC);
-
-        // Format the output
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        docID = utcDateTime.format(formatter);
-
-        String word = docWord[1];
-
-        // Emit (index, (timestamp, word))
-        context.write(new IntWritable(index), new Text(docID + "," + word));
+        // Emit (index, "formattedDate,word")
+        System.out.println("Mapper Output: " + index + " " + formattedTime + " " + word);
+        context.write(new IntWritable(index), new Text(formattedTime + "," + word));
     }
 }
