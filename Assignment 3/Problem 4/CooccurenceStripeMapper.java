@@ -4,7 +4,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import java.io.IOException;
 import java.util.*;
 
-public class CooccurrenceStripeMapper extends Mapper<LongWritable, Text, Text, MapWritable> {
+public class CooccurenceStripeMapper extends Mapper<LongWritable, Text, Text, MapWritable> {
     private Text word = new Text();
     private int distance;
 

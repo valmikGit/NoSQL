@@ -5,7 +5,7 @@ import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class CooccurrencePairsDriverWithLocalAggregationEnabled {
+public class CooccurencePairsDriverWithLocalAggregationEnabled {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         
@@ -17,11 +17,11 @@ public class CooccurrencePairsDriverWithLocalAggregationEnabled {
         }
 
         Job job = Job.getInstance(conf, "co-occurrence pairs with local aggregation");
-        job.setJarByClass(CooccurrencePairsDriver.class);
+        job.setJarByClass(CooccurencePairsDriverWithLocalAggregationEnabled.class);
         
         // Set Mapper and Reducer classes
-        job.setMapperClass(CooccurrencePairsMapper.class);
-        job.setReducerClass(CooccurrencePairsReducer.class);
+        job.setMapperClass(CooccurencePairsMapper.class);
+        job.setReducerClass(CooccurencePairsReducer.class);
 
         // Set output key and value types
         job.setOutputKeyClass(Text.class);

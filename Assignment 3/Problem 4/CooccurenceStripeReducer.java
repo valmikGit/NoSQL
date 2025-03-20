@@ -4,7 +4,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import java.io.IOException;
 import java.util.Map;
 
-public class CooccurrenceStripeReducer extends Reducer<Text, MapWritable, Text, MapWritable> {
+public class CooccurenceStripeReducer extends Reducer<Text, MapWritable, Text, MapWritable> {
     @Override
     public void reduce(Text key, Iterable<MapWritable> values, Context context) 
             throws IOException, InterruptedException {

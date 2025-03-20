@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CooccurrencePairsMapperWithLocalAggregation extends Mapper<LongWritable, Text, Text, IntWritable> {
+public class CooccurencePairsMapperWithLocalAggregation extends Mapper<LongWritable, Text, Text, IntWritable> {
     private Map<String, Integer> localAggregation;
     private int distance;
     private final static IntWritable one = new IntWritable(1);
