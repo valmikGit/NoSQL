@@ -17,7 +17,7 @@ public class WikiMapper extends Mapper<LongWritable, Text, Text, Text> {
         if (fileSplit != null && fileSplit.getPath() != null) {
             docID = fileSplit.getPath().getName();
         } else {
-            docID = "unknown_doc";  // Fallback to prevent NullPointerException
+            docID = "unknown_doc"; // Fallback to prevent NullPointerException
         }
     }
 
@@ -32,12 +32,10 @@ public class WikiMapper extends Mapper<LongWritable, Text, Text, Text> {
         int index = 0;
 
         while (tokenizer.hasMoreTokens()) {
-            String word = tokenizer.nextToken().replaceAll("[^a-zA-Z]", "").toLowerCase();
+            String word = tokenizer.nextToken(); // No filtering applied
 
-            if (word != null && !word.isEmpty()) {
-                context.write(new Text(docID), new Text(index + "," + word));
-                index++;
-            }
+            context.write(new Text(docID), new Text(index + "," + word));
+            index++;
         }
     }
 }
