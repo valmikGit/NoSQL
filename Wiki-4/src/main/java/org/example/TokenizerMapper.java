@@ -1,2 +1,4 @@
-package org.example;public class TokenizerMapper {
+package org.example;
+
+public class TokenizerMapper {
 }

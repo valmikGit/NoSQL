@@ -1,4 +1,3 @@
-
 package org.example;
 
 import org.apache.hadoop.io.IntWritable;
@@ -17,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Wikireducer extends Reducer<IntWritable, Text, IntWritable, Text> {
+public class WikireducerAfterModification extends Reducer<IntWritable, Text, IntWritable, Text> {
     private String latestTimestamp = "00:00:00";
     private List<IntWritable> indexList = new ArrayList<>();
     private List<String> wordList = new ArrayList<>();
