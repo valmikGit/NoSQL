@@ -1,4 +1,4 @@
-package org.example;
+package org;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -18,8 +18,9 @@ public class DocumentFrequency {
         Job job = Job.getInstance(conf, "document frequency");
 
         // Adding cache files (stopwords and precomputed data)
-        job.addCacheFile(new URI("/Users/mitta/Downloads/stopwords.txt"));
-        job.addCacheFile(new URI("/Users/mitta/Downloads/part-r-00000"));
+        job.addCacheFile(new URI("file:///C:/Users/mitta/Downloads/stopwords.txt"));
+        job.addCacheFile(new URI("file:///C:/Users/mitta/Downloads/part-r-00000"));
+
 
         job.setJarByClass(DocumentFrequency.class);
         job.setMapperClass(TokenizerMapper.class);
